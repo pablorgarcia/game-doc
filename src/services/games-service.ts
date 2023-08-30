@@ -1,5 +1,7 @@
 function GamesService() {
 
+    console.log('SERVICIO GET GAME LIST')
+
     /*
     async getGamesList(: Promise<Product[]> {
         if (!ProductService.products) {
