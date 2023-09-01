@@ -3,12 +3,12 @@ import { numberGreaterThanZero, undefinedValidator } from './form-validators'
 import { getGamesService } from '../../services/games-service'
 import { Game } from '../../interfaces/game';
 
-
 import './form-crud.css'
 
-function FormCrud() {
 
-  async function otraFuncion() {
+function FormGameCrud() {
+
+  async function getAllGames() {
     try {
       const games = await getGamesService();
       console.log(1, games);
@@ -16,8 +16,7 @@ function FormCrud() {
       console.log(3, error)
     }
   }
-
-  otraFuncion()
+  getAllGames()
 
   const { register, control, handleSubmit, formState: { errors } } = useForm<Game>({
     defaultValues: {
@@ -149,30 +148,30 @@ function FormCrud() {
   );
 }
 
-export default FormCrud
+export default FormGameCrud
 
 /*
     GAME
-            companyId
-            consoleId
-            count
-            description
-            genderGameId
-            image
-            isFavorite
-            isHack
-            isPhysical
-            name
-            twoPlayers
-        CONSOLA 
-            accessoryConsoleId
-            companyId
-            cost
-            count
-            description
-            image
-            mods
-            name
-            regionConsoleId
-            serialNumber
-     */
+      companyId
+      consoleId
+      count
+      description
+      genderGameId
+      image
+      isFavorite
+      isHack
+      isPhysical
+      name
+      twoPlayers
+  CONSOLA 
+      accessoryConsoleId
+      companyId
+      cost
+      count
+      description
+      image
+      mods
+      name
+      regionConsoleId
+      serialNumber
+*/

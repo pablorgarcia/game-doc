@@ -8,18 +8,26 @@ const listParams = { /* arguments from the father */ }
 function List({listParams}) {
 
   /*
-  // Cogemos la lista de los juegos 
+  // Cogemos la lista de los JUEGOS
   private function getGames() {
     this.gamesService.getGamesList();
   }
   */
 
   /*
-  // Cogemos la lista de las consolas 
+  // Cogemos la lista de las CONSOLAS 
   private function getConsolesList() {
     consolesService.getConsolesList();
   }
   */
+
+  /*
+  // Cogemos la lista de las GENERO 
+  private function GENERO() {
+    consolesService.getConsolesList();
+  }
+  */
+
 
   // Devolvemos en un bucle la lista de juegos o de consolas
   return (
