@@ -1,10 +1,9 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { numberGreaterThanZero, undefinedValidator } from './form-validators'
+import gamesService from '../../services/games-service'
 import './form-crud.css'
 
 type Inputs = {
-  selectOption: string,
-
   name: string,
   image: string,
   companyid: string,
@@ -20,6 +19,8 @@ type Inputs = {
 };
 
 function FormCrud() {
+
+  // gamesService
     
     const { register, control, handleSubmit, formState: { errors } } = useForm<Inputs>({
       defaultValues: {

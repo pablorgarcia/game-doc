@@ -1,39 +1,18 @@
+import { app } from '../config/firebase';
+import { getFirestore } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
-import { firebaseConfig } from './config';
+const db = getFirestore(app);
 
-
-function GamesService() {
-
+async function gamesService() {
+    
     console.log('SERVICIO GET GAME LIST')
 
-
-    /*
-    async getGamesList(: Promise<Product[]> {
-        if (!ProductService.products) {
-          // Traemos los productos que están en la DB
-          const productSnapshot = await getDocs(this.productCollection);
-          const productList = productSnapshot.docs.map(doc => ({id: doc?.id, ...doc?.data()}));
-          ProductService.products = productList as Product[];
-        }
-        this.productSubject.next(ProductService.products);
-        return ProductService.products;
-    }
-    */
-
-    /*
-    async getGameDetail(name: string): Promise<Product> {
-        name = name.split('-').join(' ');
-        const products = ProductService.products ? ProductService.products : await this.getProducts();
-        return products.find(product => product.name === name);
-    }
-    */
-
-    /*
-    private static async getGames(gamesId) {
-        return await doc(ConfigService.getFirestoreApp(), 'Games', gamesId);
-    }
-    */
-
+    const querySnapshot = await getDocs(collection(db, 'game'));
+    querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+    });
 }
 
-export default GamesService
+
+export default { gamesService }
