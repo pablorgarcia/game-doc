@@ -25,3 +25,10 @@ dist-ssr
 .env
 .env.local
 ESTOY-AQUI
+
+#Firebase access config
+/src/services/config.ts
+
+# Firebase
+*-debug.log
+.runtimeconfig.json
