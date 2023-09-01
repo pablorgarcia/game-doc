@@ -1,5 +1,5 @@
 import './App.css'
-import FormCrud from './components/form-crud/form-crud'
+import FormGameCrud from './components/form-crud/form-game-crud'
 
 function App() {
   console.log(import.meta.env.VITE_PROJECT_ID)
@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       Game doc
-      <FormCrud></FormCrud>
+      <FormGameCrud></FormGameCrud>
     </>
   )
 }
