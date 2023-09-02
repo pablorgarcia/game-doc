@@ -1,40 +1,45 @@
+import { useEffect, useState } from 'react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { numberGreaterThanZero, undefinedValidator } from './form-validators'
-import { getGamesService } from '../../services/games-service'
-import { Game } from '../../interfaces/game';
-
+import { addGame, getGames } from '../../services/games-service'
+import { Game } from '../../interfaces/game'
 import './form-crud.css'
 
-
 function FormGameCrud() {
-
-  async function getAllGames() {
+  
+  const [games, setGames] = useState<Game[]>([]);
+  
+  const fetchGames = async () => {
     try {
-      const games = await getGamesService();
-      console.log(1, games);
+      const gamesData = await getGames();
+      setGames(gamesData);
+      console.log(1, gamesData);
     } catch (error) {
-      console.log(3, error)
+      console.log('error fetchGames', error)
     }
   }
-  getAllGames()
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
 
   const { register, control, handleSubmit, formState: { errors } } = useForm<Game>({
     defaultValues: {
       amount: 1
     }
   });
-  const onSubmit: SubmitHandler<Game> = data => {
-    
-    // const selectedValue: number = Number.parseInt(data.companyid)
-    // const options = ["opcion0", "opcion1"]
-    // const selectedIndex = options[selectedValue]
 
-    console.log(data)
-    // console.log(1, selectedValue, typeof selectedValue)
-    // console.log(2, selectedIndex)
+  const onSubmit: SubmitHandler<Game> = async (data) => {
+    try {
+      await addGame(data);
+      console.log(data)
+    } catch (error) {
+      console.log('error onsubmit game form', error)
+    }
   };
 
-  //console.log(watch("example")) // watch input value by passing the name of it
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
