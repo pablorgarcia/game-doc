@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { numberGreaterThanZero, undefinedValidator } from './form-validators'
+
 import { addGame, getGames } from '../../services/games-service'
 import { getGenderGames } from '../../services/gender-game-service'
+import { getCompanyGame } from '../../services/company-game-service'
+import { getCompanyConsole } from '../../services/company-console-service'
+import { getRegionGame } from '../../services/region-game-service'
+
 import { Game } from '../../interfaces/game'
 import { GenderGames } from '../../interfaces/gender-game'
+import { CompanyGames } from '../../interfaces/company-game'
+import { CompanyConsole } from '../../interfaces/company-console'
+import { RegionGame } from '../../interfaces/region-game'
+
 import './form-crud.css'
 
 
@@ -12,6 +21,9 @@ function FormGameCrud() {
   
   const [games, setGames] = useState<Game[]>([]);
   const [genders, setGender] = useState<GenderGames[]>([]);
+  const [companies, setCompanies] = useState<CompanyGames[]>([]);
+  const [companiesConsoles, setCompaniesConsole] = useState<CompanyConsole[]>([]);
+  const [regionesGames, setRegionGames] = useState<RegionGame[]>([]);
 
   useEffect(() => {
 
@@ -33,9 +45,39 @@ function FormGameCrud() {
         console.log('error fetchGender', error)
       }
     }
+    const fetchCompany = async () => {
+      try {
+        const companyData = await getCompanyGame();
+        setCompanies(companyData);
+        console.log(1, companyData);
+      } catch (error) {
+        console.log('error fetchCompany', error)
+      }
+    }
+    const fetchCompanyConsoles = async () => {
+      try {
+        const companyConsoleData = await getCompanyConsole();
+        setCompaniesConsole(companyConsoleData);
+        console.log(1, companyConsoleData);
+      } catch (error) {
+        console.log('error fetchCompanyGames', error)
+      }
+    }
+    const fetchRegionGames = async () => {
+      try {
+        const regionesGames = await getRegionGame();
+        setRegionGames(regionesGames);
+        console.log(1, regionesGames);
+      } catch (error) {
+        console.log('error fetchRegionGames', error)
+      }
+    }
 
     fetchGames();
     fetchGender();
+    fetchCompany();
+    fetchCompanyConsoles();
+    fetchRegionGames();
   }, []);
 
 
@@ -71,14 +113,17 @@ function FormGameCrud() {
       </label>
 
       <label>Compañia:
-        <Controller
+      <Controller
           name="companyid"
           control={control}
           render={({ field }) => (
             <select {...field}>
               <option value={0}>Selecciona</option>
-              <option value={1}>Capcom</option>
-              <option value={2}>Namco</option>
+              {companies[0]?.name.map((company, index) => (
+                <option key={index} value={index + 1}>
+                  {company}
+                </option>
+              ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}
@@ -87,14 +132,17 @@ function FormGameCrud() {
       </label>
 
       <label>Consola:
-        <Controller
+      <Controller
           name="consoleid"
           control={control}
           render={({ field }) => (
             <select {...field}>
               <option value={0}>Selecciona</option>
-              <option value={1}>Nintendo</option>
-              <option value={2}>Play</option>
+              {companiesConsoles[0]?.name.map((companyConsole, index) => (
+                <option key={index} value={index + 1}>
+                  {companyConsole}
+                </option>
+              ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}
@@ -103,20 +151,25 @@ function FormGameCrud() {
       </label>
 
       <label>Region:
-        <Controller
+      <Controller
           name="regiongameid"
           control={control}
           render={({ field }) => (
             <select {...field}>
               <option value={0}>Selecciona</option>
-              <option value={1}>Pal</option>
-              <option value={2}>Ntsc</option>
+              {regionesGames[0]?.region.map((region, index) => (
+                <option key={index} value={index + 1}>
+                  {region}
+                </option>
+              ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}
         />
         { errors.regiongameid?.type === 'validate' && <span>Rellena los campos vacios</span>}
       </label>
+
+
 
       <label>Cantidad:
         <input type='number' {...register("amount", {validate: numberGreaterThanZero})} />
@@ -172,29 +225,3 @@ function FormGameCrud() {
 }
 
 export default FormGameCrud
-
-/*
-    GAME
-      companyId
-      consoleId
-      count
-      description
-      genderGameId
-      image
-      isFavorite
-      isHack
-      isPhysical
-      name
-      twoPlayers
-  CONSOLA 
-      accessoryConsoleId
-      companyId
-      cost
-      count
-      description
-      image
-      mods
-      name
-      regionConsoleId
-      serialNumber
-*/
