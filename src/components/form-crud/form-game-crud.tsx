@@ -2,26 +2,42 @@ import { useEffect, useState } from 'react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { numberGreaterThanZero, undefinedValidator } from './form-validators'
 import { addGame, getGames } from '../../services/games-service'
+import { getGenderGames } from '../../services/gender-game-service'
 import { Game } from '../../interfaces/game'
+import { GenderGames } from '../../interfaces/gender-game'
 import './form-crud.css'
+
 
 function FormGameCrud() {
   
   const [games, setGames] = useState<Game[]>([]);
-  
-  const fetchGames = async () => {
-    try {
-      const gamesData = await getGames();
-      setGames(gamesData);
-      console.log(1, gamesData);
-    } catch (error) {
-      console.log('error fetchGames', error)
-    }
-  }
+  const [genders, setGender] = useState<GenderGames[]>([]);
 
   useEffect(() => {
+
+    const fetchGames = async () => {
+      try {
+        const gamesData = await getGames();
+        setGames(gamesData);
+        console.log(1, gamesData);
+      } catch (error) {
+        console.log('error fetchGames', error)
+      }
+    }
+    const fetchGender = async () => {
+      try {
+        const genderData = await getGenderGames();
+        setGender(genderData);
+        console.log(1, genderData);
+      } catch (error) {
+        console.log('error fetchGender', error)
+      }
+    }
+
     fetchGames();
+    fetchGender();
   }, []);
+
 
 
   const { register, control, handleSubmit, formState: { errors } } = useForm<Game>({
@@ -38,7 +54,6 @@ function FormGameCrud() {
       console.log('error onsubmit game form', error)
     }
   };
-
 
 
   return (
@@ -113,14 +128,17 @@ function FormGameCrud() {
       </label>
 
       <label>Género:
-        <Controller
+      <Controller
           name="gendergameid"
           control={control}
           render={({ field }) => (
             <select {...field}>
               <option value={0}>Selecciona</option>
-              <option value={1}>Nintendo</option>
-              <option value={2}>Play</option>
+              {genders[0]?.name.map((genre, index) => (
+                <option key={index} value={index + 1}>
+                  {genre}
+                </option>
+              ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}

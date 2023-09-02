@@ -1,13 +1,13 @@
 import { app } from '../config/firebase';
 import { getFirestore, getDocs, collection } from 'firebase/firestore';
-import { GenderGame } from '../interfaces/gender-game';
+import { GenderGames } from '../interfaces/gender-game';
 
 const db = getFirestore(app);
 
-export async function getGenderGame() {
+export async function getGenderGames() {
   try {
     const querySnapshot = await getDocs(collection(db, 'genderGame'));
-    const genderGameData: GenderGame[] = [];
+    const genderGameData: GenderGames[] = [];
     querySnapshot.forEach((doc) => {
         const data = doc.data();
         const gender = {

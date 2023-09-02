@@ -4,7 +4,6 @@ import Menu from '../menu/menu'
 function Header() {
   return (
     <header>
-      Videogame library
       <Menu></Menu>
     </header>
   )
