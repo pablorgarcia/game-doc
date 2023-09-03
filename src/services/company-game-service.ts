@@ -1,22 +1,22 @@
 import { app } from '../config/firebase';
 import { getFirestore, getDocs, collection } from 'firebase/firestore';
-import { CompanyGames } from '../interfaces/company-game';
+import { GamesCompany } from '../interfaces/game-company';
 
 const db = getFirestore(app);
 
-export async function getCompanyGame() {
+export async function getGamesCompany() {
   try {
-    const querySnapshot = await getDocs(collection(db, 'companyGame'));
-    const companyGameData: CompanyGames[] = [];
+    const querySnapshot = await getDocs(collection(db, 'gameCompany'));
+    const gameCompanyData: GamesCompany[] = [];
     querySnapshot.forEach((doc) => {
         const data = doc.data();
-        const company = {
+        const companyName = {
             name: data.name || ''
         };
-        companyGameData.push(company);
+        gameCompanyData.push(companyName);
     });
-    console.log('service COMPANY GAME',companyGameData)
-    return companyGameData;
+    console.log('service COMPANY GAME',gameCompanyData)
+    return gameCompanyData;
 } catch (error) {
     console.error('Error al obtener los company games:', error);
     throw error;

@@ -12,17 +12,18 @@ export async function getGames() {
             const data = doc.data();
             const game = {
                 name: data.name || '',
-                image: data.image || '',
-                companyid: data.companyid || '',
-                consoleid: data.consoleid || '',
-                amount: data.amount || 0,
+                consoleId: data.consoleId || '',
+                regionId: data.regionId || '',
+                countryId: data.countryId || '',
+                genderId: data.genderId || '',
+                companyId: data.companyId || '',
                 description: data.description || '',
-                gendergameid: data.gendergameid || '',
-                regiongameid: data.regiongameid || '',
-                isfavorite: data.isfavorite || false,
-                ishack: data.ishack || false,
-                isphysical: data.ishack || false,
-                twoplayers: data.ishack || false
+                image: data.image || '',
+                amount: data.amount || 0,
+                isFavorite: data.isFavorite || false,
+                isHack: data.isHack || false,
+                isPhysical: data.isPhysical || false,
+                twoPlayers: data.twoPlayers || false
             };
             gamesData.push(game);
         });

@@ -1,3 +1,3 @@
 export interface CompanyConsole {
-  name: [ string ]
+  name: string[];
 }

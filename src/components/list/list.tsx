@@ -1,6 +1,6 @@
 import './list.css' 
 import GamesService from '../../services/games-service'
-import ConsolesService from '../../services/consoles-service'
+import ConsolesService from '../../services/console-list-service'
 
 
 const listParams = { /* arguments from the father */ }

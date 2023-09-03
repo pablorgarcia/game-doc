@@ -3,16 +3,16 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { numberGreaterThanZero, undefinedValidator } from './form-validators'
 
 import { addGame, getGames } from '../../services/games-service'
-import { getGenderGames } from '../../services/gender-game-service'
-import { getCompanyGame } from '../../services/company-game-service'
-import { getCompanyConsole } from '../../services/company-console-service'
-import { getRegionGame } from '../../services/region-game-service'
+import { getGender } from '../../services/gender-service'
+import { getGamesCompany } from '../../services/company-game-service'
+import { getRegion } from '../../services/region-service'
+import { getConsoleListService } from '../../services/console-list-service'
 
 import { Game } from '../../interfaces/game'
-import { GenderGames } from '../../interfaces/gender-game'
-import { CompanyGames } from '../../interfaces/company-game'
-import { CompanyConsole } from '../../interfaces/company-console'
-import { RegionGame } from '../../interfaces/region-game'
+import { Gender } from '../../interfaces/gender'
+import { GamesCompany } from '../../interfaces/game-company'
+import { ConsoleList } from '../../interfaces/consoleList'
+import { Region } from '../../interfaces/region'
 
 import './form-crud.css'
 
@@ -20,10 +20,13 @@ import './form-crud.css'
 function FormGameCrud() {
   
   const [games, setGames] = useState<Game[]>([]);
-  const [genders, setGender] = useState<GenderGames[]>([]);
-  const [companies, setCompanies] = useState<CompanyGames[]>([]);
-  const [companiesConsoles, setCompaniesConsole] = useState<CompanyConsole[]>([]);
-  const [regionesGames, setRegionGames] = useState<RegionGame[]>([]);
+  const [genders, setGender] = useState<Gender[]>([]);
+  const [companies, setCompanies] = useState<GamesCompany[]>([]);
+  const [consoleList, setConsoleList] = useState<ConsoleList[]>([]);
+  const [regions, setRegion] = useState<Region[]>([]);
+
+  const [selectedRegion, setSelectedRegion] = useState(""); // Para almacenar la selección de la región
+  const [selectedSubregion, setSelectedSubregion] = useState(""); // Para almacenar la subregión seleccionada
 
   useEffect(() => {
 
@@ -31,53 +34,48 @@ function FormGameCrud() {
       try {
         const gamesData = await getGames();
         setGames(gamesData);
-        console.log(1, gamesData);
       } catch (error) {
         console.log('error fetchGames', error)
       }
     }
     const fetchGender = async () => {
       try {
-        const genderData = await getGenderGames();
+        const genderData = await getGender();
         setGender(genderData);
-        console.log(1, genderData);
       } catch (error) {
         console.log('error fetchGender', error)
       }
     }
     const fetchCompany = async () => {
       try {
-        const companyData = await getCompanyGame();
+        const companyData = await getGamesCompany();
         setCompanies(companyData);
-        console.log(1, companyData);
       } catch (error) {
         console.log('error fetchCompany', error)
       }
     }
-    const fetchCompanyConsoles = async () => {
+    const fetchConsoleList = async () => {
       try {
-        const companyConsoleData = await getCompanyConsole();
-        setCompaniesConsole(companyConsoleData);
-        console.log(1, companyConsoleData);
+        const consoleNameData = await getConsoleListService();
+        setConsoleList(consoleNameData);
       } catch (error) {
-        console.log('error fetchCompanyGames', error)
+        console.log('error fetchConsoles', error)
       }
     }
-    const fetchRegionGames = async () => {
+    const fetchRegion = async () => {
       try {
-        const regionesGames = await getRegionGame();
-        setRegionGames(regionesGames);
-        console.log(1, regionesGames);
+        const regions = await getRegion();
+        setRegion(regions);
       } catch (error) {
-        console.log('error fetchRegionGames', error)
+        console.log('error fetchRegion', error)
       }
     }
 
     fetchGames();
     fetchGender();
     fetchCompany();
-    fetchCompanyConsoles();
-    fetchRegionGames();
+    fetchConsoleList();
+    fetchRegion();
   }, []);
 
 
@@ -91,7 +89,7 @@ function FormGameCrud() {
   const onSubmit: SubmitHandler<Game> = async (data) => {
     try {
       await addGame(data);
-      console.log(data)
+      console.log('SUBMIT GAME', data)
     } catch (error) {
       console.log('error onsubmit game form', error)
     }
@@ -108,81 +106,46 @@ function FormGameCrud() {
         { errors.name?.type === 'required' && <span>Rellena los campos vacios</span>}
       </label>
 
-      <label>Imagen:
-        <input {...register("image")} />
-      </label>
-
-      <label>Compañia:
-      <Controller
-          name="companyid"
-          control={control}
-          render={({ field }) => (
-            <select {...field}>
-              <option value={0}>Selecciona</option>
-              {companies[0]?.name.map((company, index) => (
-                <option key={index} value={index + 1}>
-                  {company}
-                </option>
-              ))}
-            </select>
-          )}
-          rules={{ validate: undefinedValidator }}
-        />
-        { errors.companyid?.type === 'validate' && <span>Rellena los campos vacios</span>}
-      </label>
-
       <label>Consola:
       <Controller
-          name="consoleid"
+          name="consoleId"
           control={control}
           render={({ field }) => (
             <select {...field}>
               <option value={0}>Selecciona</option>
-              {companiesConsoles[0]?.name.map((companyConsole, index) => (
+              {consoleList[0]?.name.map((console, index) => (
                 <option key={index} value={index + 1}>
-                  {companyConsole}
+                  {console}
                 </option>
               ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}
         />
-        { errors.consoleid?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        { errors.consoleId?.type === 'validate' && <span>Rellena los campos vacios</span>}
       </label>
 
-      <label>Region:
-      <Controller
-          name="regiongameid"
+      <label>Región:
+        <Controller
+          name="regionId"
           control={control}
           render={({ field }) => (
             <select {...field}>
-              <option value={0}>Selecciona</option>
-              {regionesGames[0]?.region.map((region, index) => (
-                <option key={index} value={index + 1}>
-                  {region}
-                </option>
+              {regions.map((region, index) => (
+                <option key={index}>
+                {index}
+              </option>
               ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}
         />
-        { errors.regiongameid?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        {errors.regionId?.type === 'validate' && <span>Rellena los campos vacíos</span>}
       </label>
-
-
-
-      <label>Cantidad:
-        <input type='number' {...register("amount", {validate: numberGreaterThanZero})} />
-        { errors.amount?.type === 'validate' && <span>Rellena los campos vacios</span>}
-      </label>
-
-      <label>Description:
-        <input {...register("description")} />
-      </label>
-
+      
       <label>Género:
       <Controller
-          name="gendergameid"
+          name="genderId"
           control={control}
           render={({ field }) => (
             <select {...field}>
@@ -196,27 +159,55 @@ function FormGameCrud() {
           )}
           rules={{ validate: undefinedValidator }}
         />
-        { errors.gendergameid?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        { errors.genderId?.type === 'validate' && <span>Rellena los campos vacios</span>}
       </label>
 
-      {/* BULEANO */}
+      <label>Compañia:
+      <Controller
+          name="companyId"
+          control={control}
+          render={({ field }) => (
+            <select {...field}>
+              <option value={0}>Selecciona</option>
+              {companies[0]?.name.map((company, index) => (
+                <option key={index} value={index + 1}>
+                  {company}
+                </option>
+              ))}
+            </select>
+          )}
+          rules={{ validate: undefinedValidator }}
+        />
+        { errors.companyId?.type === 'validate' && <span>Rellena los campos vacios</span>}
+      </label>
+
+      <label>Description:
+        <input {...register("description")} />
+      </label>
+
+      <label>Imagen:
+        <input {...register("image")} />
+      </label>
+
+      <label>Cantidad:
+        <input type='number' {...register("amount", {validate: numberGreaterThanZero})} />
+        { errors.amount?.type === 'validate' && <span>Rellena los campos vacios</span>}
+      </label>
+      
       <label>Favorito:
-        <input type='checkbox' {...register("isfavorite")} />
+        <input type='checkbox' {...register("isFavorite")} />
       </label>
 
-      {/* BULEANO */}
       <label>Hack:
-        <input type='checkbox' {...register("ishack")} />
+        <input type='checkbox' {...register("isHack")} />
       </label>
 
-      {/* BULEANO */}
       <label>Físico:
-        <input type='checkbox' {...register("isphysical")} />
+        <input type='checkbox' {...register("isPhysical")} />
       </label>
 
-      {/* BULEANO */}
       <label>2 jugadores:
-        <input type='checkbox' {...register("twoplayers")} />
+        <input type='checkbox' {...register("twoPlayers")} />
       </label>
 
       <input type="submit" />
