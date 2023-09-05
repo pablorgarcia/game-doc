@@ -23,10 +23,18 @@ function FormGameCrud() {
   const [genders, setGender] = useState<Gender[]>([]);
   const [companies, setCompanies] = useState<GamesCompany[]>([]);
   const [consoleList, setConsoleList] = useState<ConsoleList[]>([]);
-  const [regions, setRegion] = useState<Region[]>([]);
 
-  const [selectedRegion, setSelectedRegion] = useState(""); // Para almacenar la selección de la región
-  const [selectedSubregion, setSelectedSubregion] = useState(""); // Para almacenar la subregión seleccionada
+
+  const useRegion = () => {
+    const [regions, setRegion] = useState<Region[]>([]);
+    const regionsKeys = regions.map(key => Object.keys(key))
+    const countriesValues = () => {}
+
+    console.log(111, 'lol', regionsKeys)
+    console.log(222, 'hey', countriesValues)
+    return { regions, setRegion, regionsKeys, countriesValues };
+  }
+
 
   useEffect(() => {
 
@@ -80,11 +88,13 @@ function FormGameCrud() {
 
 
 
-  const { register, control, handleSubmit, formState: { errors } } = useForm<Game>({
+  const { register, control, watch, handleSubmit, formState: { errors } } = useForm<Game>({
     defaultValues: {
       amount: 1
     }
   });
+
+  const regionIsActive = watch('regionId');
 
   const onSubmit: SubmitHandler<Game> = async (data) => {
     try {
@@ -95,6 +105,8 @@ function FormGameCrud() {
     }
   };
 
+  const { setRegion, regionsKeys, countriesValues } = useRegion()
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -103,7 +115,7 @@ function FormGameCrud() {
 
       <label>Nombre:
         <input {...register("name", { required: true })} />
-        { errors.name?.type === 'required' && <span>Rellena los campos vacios</span>}
+        { errors.name?.type === 'required' && <span>Rellena el campo vacío</span>}
       </label>
 
       <label>Consola:
@@ -122,7 +134,7 @@ function FormGameCrud() {
           )}
           rules={{ validate: undefinedValidator }}
         />
-        { errors.consoleId?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        { errors.consoleId?.type === 'validate' && <span>Rellena el campo vacío</span>}
       </label>
 
       <label>Región:
@@ -131,17 +143,40 @@ function FormGameCrud() {
           control={control}
           render={({ field }) => (
             <select {...field}>
-              {regions.map((region, index) => (
-                <option key={index}>
-                {index}
-              </option>
+              <option value={0}>Selecciona</option>
+                {regionsKeys.map((value, index) => (
+                  <option key={index}>
+                    {value}
+                  </option>
               ))}
             </select>
           )}
           rules={{ validate: undefinedValidator }}
         />
-        {errors.regionId?.type === 'validate' && <span>Rellena los campos vacíos</span>}
+        {errors.regionId?.type === 'validate' && <span>Rellena el campo vacío</span>}
       </label>
+
+      { regionIsActive && (
+        <label>País:
+        <Controller
+          name="countryId"
+          control={control}
+          render={({ field }) => (
+            <select {...field}>
+              <option value={0}>Selecciona</option>
+              {regions.map((country, index) => {
+                <option key={index} value={index + 1}>
+                  {country[regionIsActive]}
+                </option>
+              })}
+          </select>
+          )}
+          rules={{ validate: undefinedValidator }}
+        />
+        {errors.countryId?.type === 'validate' && <span>Rellena el campo vacío</span>}
+      </label>
+      )}
+      
       
       <label>Género:
       <Controller
@@ -159,7 +194,7 @@ function FormGameCrud() {
           )}
           rules={{ validate: undefinedValidator }}
         />
-        { errors.genderId?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        { errors.genderId?.type === 'validate' && <span>Rellena el campo vacío</span>}
       </label>
 
       <label>Compañia:
@@ -178,7 +213,7 @@ function FormGameCrud() {
           )}
           rules={{ validate: undefinedValidator }}
         />
-        { errors.companyId?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        { errors.companyId?.type === 'validate' && <span>Rellena el campo vacío</span>}
       </label>
 
       <label>Description:
@@ -191,7 +226,7 @@ function FormGameCrud() {
 
       <label>Cantidad:
         <input type='number' {...register("amount", {validate: numberGreaterThanZero})} />
-        { errors.amount?.type === 'validate' && <span>Rellena los campos vacios</span>}
+        { errors.amount?.type === 'validate' && <span>Tiene que ser mayor que cero</span>}
       </label>
       
       <label>Favorito:
