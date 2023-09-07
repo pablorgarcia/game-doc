@@ -20,81 +20,65 @@ import './form-crud.css'
 function FormGameCrud() {
   
   const [games, setGames] = useState<Game[]>([]);
+  const [consoleList, setConsoleList] = useState<ConsoleList[]>([]);
+  const [regionsList, setRegion] = useState<string[]>([]);
+  const [countryList, setCountry] = useState<string[]>([]);
   const [genders, setGender] = useState<Gender[]>([]);
   const [companies, setCompanies] = useState<GamesCompany[]>([]);
-  const [consoleList, setConsoleList] = useState<ConsoleList[]>([]);
 
+  const { register, control, watch, handleSubmit, formState: { errors } } = useForm<Game>({ defaultValues: { amount: 1 } });
+  const regionIsActive: string = watch('regionId');
 
-  const useRegion = () => {
-    const [regions, setRegion] = useState<Region[]>([]);
-    const regionsKeys = regions.map(key => Object.keys(key))
-    const countriesValues = () => {}
-
-    console.log(111, 'lol', regionsKeys)
-    console.log(222, 'hey', countriesValues)
-    return { regions, setRegion, regionsKeys, countriesValues };
+  const fetchGames = async () => {
+    try {
+      const gamesData = await getGames();
+      setGames(gamesData);
+    } catch (error) {
+      console.log('error fetchGames', error)
+    }
+  }
+  const fetchConsoleList = async () => {
+    try {
+      const consoleNameData = await getConsoleListService();
+      setConsoleList(consoleNameData);
+    } catch (error) {
+      console.log('error fetchConsoles', error)
+    }
+  }
+  const fetchRegion = async () => {
+    try {
+      // const regions: string[] = await getRegion();
+      const regionData = await getRegion();
+      setRegion(regionData.region);
+      setCountry(regionData.country);
+    } catch (error) {
+      console.log('error fetchRegion', error)
+    }
+  }
+  const fetchGender = async () => {
+    try {
+      const genderData = await getGender();
+      setGender(genderData);
+    } catch (error) {
+      console.log('error fetchGender', error)
+    }
+  }
+  const fetchCompany = async () => {
+    try {
+      const companyData = await getGamesCompany();
+      setCompanies(companyData);
+    } catch (error) {
+      console.log('error fetchCompany', error)
+    }
   }
 
-
   useEffect(() => {
-
-    const fetchGames = async () => {
-      try {
-        const gamesData = await getGames();
-        setGames(gamesData);
-      } catch (error) {
-        console.log('error fetchGames', error)
-      }
-    }
-    const fetchGender = async () => {
-      try {
-        const genderData = await getGender();
-        setGender(genderData);
-      } catch (error) {
-        console.log('error fetchGender', error)
-      }
-    }
-    const fetchCompany = async () => {
-      try {
-        const companyData = await getGamesCompany();
-        setCompanies(companyData);
-      } catch (error) {
-        console.log('error fetchCompany', error)
-      }
-    }
-    const fetchConsoleList = async () => {
-      try {
-        const consoleNameData = await getConsoleListService();
-        setConsoleList(consoleNameData);
-      } catch (error) {
-        console.log('error fetchConsoles', error)
-      }
-    }
-    const fetchRegion = async () => {
-      try {
-        const regions = await getRegion();
-        setRegion(regions);
-      } catch (error) {
-        console.log('error fetchRegion', error)
-      }
-    }
-
     fetchGames();
-    fetchGender();
-    fetchCompany();
     fetchConsoleList();
     fetchRegion();
+    fetchGender();
+    fetchCompany();
   }, []);
-
-
-
-  const { register, control, watch, handleSubmit, formState: { errors } } = useForm<Game>({
-    defaultValues: {
-      amount: 1
-    }
-  });
-
-  const regionIsActive = watch('regionId');
 
   const onSubmit: SubmitHandler<Game> = async (data) => {
     try {
@@ -104,9 +88,6 @@ function FormGameCrud() {
       console.log('error onsubmit game form', error)
     }
   };
-
-  const { setRegion, regionsKeys, countriesValues } = useRegion()
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -124,7 +105,6 @@ function FormGameCrud() {
           control={control}
           render={({ field }) => (
             <select {...field}>
-              <option value={0}>Selecciona</option>
               {consoleList[0]?.name.map((console, index) => (
                 <option key={index} value={index + 1}>
                   {console}
@@ -138,21 +118,18 @@ function FormGameCrud() {
       </label>
 
       <label>Región:
-        <Controller
-          name="regionId"
-          control={control}
-          render={({ field }) => (
-            <select {...field}>
-              <option value={0}>Selecciona</option>
-                {regionsKeys.map((value, index) => (
-                  <option key={index}>
-                    {value}
-                  </option>
-              ))}
-            </select>
-          )}
-          rules={{ validate: undefinedValidator }}
-        />
+      <Controller
+        name="regionId"
+        control={control}
+        render={({ field }) => (
+          <select {...field}>
+            {regionsList.map((value, index) => (
+              <option key={value} value={index}>{value}</option>
+            ))}
+          </select>
+        )}
+        rules={{ validate: undefinedValidator }}
+      />
         {errors.regionId?.type === 'validate' && <span>Rellena el campo vacío</span>}
       </label>
 
@@ -163,12 +140,9 @@ function FormGameCrud() {
           control={control}
           render={({ field }) => (
             <select {...field}>
-              <option value={0}>Selecciona</option>
-              {regions.map((country, index) => {
-                <option key={index} value={index + 1}>
-                  {country[regionIsActive]}
-                </option>
-              })}
+              {countryList[regionIsActive].map((value: string, index: string) => (
+              <option key={value} value={index}>{value}</option>
+            ))}
           </select>
           )}
           rules={{ validate: undefinedValidator }}
@@ -177,14 +151,12 @@ function FormGameCrud() {
       </label>
       )}
       
-      
       <label>Género:
       <Controller
           name="genderId"
           control={control}
           render={({ field }) => (
             <select {...field}>
-              <option value={0}>Selecciona</option>
               {genders[0]?.name.map((genre, index) => (
                 <option key={index} value={index + 1}>
                   {genre}
@@ -203,7 +175,6 @@ function FormGameCrud() {
           control={control}
           render={({ field }) => (
             <select {...field}>
-              <option value={0}>Selecciona</option>
               {companies[0]?.name.map((company, index) => (
                 <option key={index} value={index + 1}>
                   {company}

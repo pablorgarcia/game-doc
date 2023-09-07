@@ -6,19 +6,14 @@ const db = getFirestore(app);
 
 export async function getRegion() {
   try {
+    const regionsData: Region = { region: [], country: [] }
+     
     const querySnapshot = await getDocs(collection(db, 'region'));
-    const regionsData: Region[] = [];
     querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        //const regionsKeys = Object.keys(data);
-        const countries: Region = {
-          NTSC: data.NTSC || ['NTSC vacio'],
-          PAL: data.PAL || ['PAL vacio'],
-          RegionFree: data.RegionFree || ['Free vacio']
-        };
-        regionsData.push(countries);
+      regionsData.region = Object.keys(doc.data()); // [ntsc, pal, free]
+      regionsData.country = Object.values(doc.data()); // [[usa, jap], [es, fr, uk], [free]]
     });
-    console.log('service',regionsData)
+
     return regionsData;
   } catch (error) {
       console.error('Error al obtener los region:', error);

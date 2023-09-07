@@ -1,5 +1,4 @@
 export interface Region {
-  NTSC: string[];
-  PAL: string[];
-  RegionFree: string[];
+  region: string[];
+  country: string[];
 }
